@@ -303,6 +303,10 @@ const MachODumper = struct {
         if (symtab_cmd) |cmd| {
             try writer.writeAll("symtab\n");
             const strtab = bytes[cmd.stroff..][0..cmd.strsize];
+            std.log.warn("wanted alignment 0x{x}, actual ptr 0x{x}", .{
+                @alignOf(macho.nlist_64),
+                @ptrToInt(bytes.ptr + cmd.symoff),
+            });
             const symtab = @ptrCast(
                 [*]const macho.nlist_64,
                 @alignCast(@alignOf(macho.nlist_64), bytes.ptr + cmd.symoff),
